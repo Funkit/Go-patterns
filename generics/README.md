@@ -93,23 +93,18 @@ The full pseudo code:
 ```
 type AntennaController interface {
 	LoadConfig(filePath string)
-	Type() string
 }
 
 type ControllerOne struct{}
 
-func (c1 *ControllerOne) LoadConfig(filePath string) {}
-
-func (c1 *ControllerOne) Type() string {
-	return "ControllerOne"
+func (c1 *ControllerOne) LoadConfig(filePath string) {
+    //Load data from file, mutate object
 }
 
 type ControllerTwo struct{}
 
-func (c2 *ControllerTwo) LoadConfig(filePath string) {}
-
-func (c2 *ControllerTwo) Type() string {
-	return "ControllerTwo"
+func (c2 *ControllerTwo) LoadConfig(filePath string) {
+    //Load data from file, mutate object
 }
 
 type AntennaControllerConstraint[P any] interface {
@@ -125,6 +120,20 @@ func NewAntennaController[T any, P AntennaControllerConstraint[T]](filePath stri
 	acuPointer.LoadConfig(filePath)
 
 	return acuPointer
+}
+
+func main() {
+	var acu AntennaController
+
+	var acuType string
+	acuType = "ControllerTwo"
+
+	switch acuType {
+	case "ControllerOne":
+		acu = NewAntennaController[ControllerOne]("path/to/config/file")
+	case "ControllerTwo":
+		acu = NewAntennaController[ControllerTwo]("path/to/config/file")
+	}
 }
 ```
 
