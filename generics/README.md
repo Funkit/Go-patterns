@@ -14,23 +14,19 @@ For instance, consider the following:
 
 ```
 type AntennaController interface {
-    LoadConfig(filePath string)
+	LoadConfig(filePath string)
 }
 
-type ControllerOne struct {
-	//ControllerOne specific parameters
-}
+type ControllerOne struct{}
 
 func (c1 *ControllerOne) LoadConfig(filePath string) {
-    // load config from file into the controller
+    //Load data from file, mutate object
 }
 
-type ControllerTwo struct {
-	//ControllerTwo specific parameters
-}
+type ControllerTwo struct{}
 
 func (c2 *ControllerTwo) LoadConfig(filePath string) {
-    // load config from file into the controller
+    //Load data from file, mutate object
 }
 
 func main() {
@@ -77,14 +73,14 @@ type AntennaControllerConstraint[P any] interface {
 	*P
 }
 
-NewAntennaController[T any, P AntennaControllerConstraint[T]](filePath string) AntennaController {
-    var acuPointer P
+func NewAntennaController[T any, P AntennaControllerConstraint[T]](filePath string) AntennaController {
+	var acuPointer P
 	var acu T
 	acuPointer = &acu
 
-    acuPointer.LoadConfig(filepath)
+	acuPointer.LoadConfig(filePath)
 
-    return acuPointer
+	return acuPointer
 }
 ```
 
@@ -96,23 +92,24 @@ The full pseudo code:
 
 ```
 type AntennaController interface {
-    LoadConfig(filePath string)
+	LoadConfig(filePath string)
+	Type() string
 }
 
-type ControllerOne struct {
-	//ControllerOne specific parameters
+type ControllerOne struct{}
+
+func (c1 *ControllerOne) LoadConfig(filePath string) {}
+
+func (c1 *ControllerOne) Type() string {
+	return "ControllerOne"
 }
 
-func (c1 *ControllerOne) LoadConfig(filePath string) {
-    // load config from file into the controller
-}
+type ControllerTwo struct{}
 
-type ControllerTwo struct {
-	//ControllerTwo specific parameters
-}
+func (c2 *ControllerTwo) LoadConfig(filePath string) {}
 
-func (c2 *ControllerTwo) LoadConfig(filePath string) {
-    // load config from file into the controller
+func (c2 *ControllerTwo) Type() string {
+	return "ControllerTwo"
 }
 
 type AntennaControllerConstraint[P any] interface {
@@ -120,28 +117,14 @@ type AntennaControllerConstraint[P any] interface {
 	*P
 }
 
-NewAntennaController[T any, P AntennaControllerConstraint[T]](filePath string) AntennaController {
-    var acuPointer P
+func NewAntennaController[T any, P AntennaControllerConstraint[T]](filePath string) AntennaController {
+	var acuPointer P
 	var acu T
 	acuPointer = &acu
 
-    acuPointer.LoadConfig(filepath)
+	acuPointer.LoadConfig(filePath)
 
-    return acuPointer
-}
-
-func main() {
-    var acu AntennaController
-
-    var acuType string
-    acuType := "ControllerTwo"
-
-    switch acuType {
-        case "ControllerOne":
-            acu = NewAntennaController[ControllerOne]("path/to/config/file")
-        case "ControllerTwo":
-            acu = NewAntennaController[ControllerTwo]("path/to/config/file")
-    }
+	return acuPointer
 }
 ```
 
