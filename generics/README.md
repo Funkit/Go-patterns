@@ -4,12 +4,12 @@
 
 ### The problem
 
-When having a function building a specific type, it can be useful to have a generic implementation that would only build types that satisfy a given interface.
+When having a function building a specific type, it can be useful to have a generic implementation that would only build types that implement a given interface.
 
 For instance, consider the following:
 
 - We have an interface called `AntennaController`, with a `LoadConfig` method. This method mutates the object, so the implementations have pointer receivers.
-- Two distinct structs `ControllerOne` and `ControllerTwo` satisfy the interface.
+- Two distinct structs `ControllerOne` and `ControllerTwo` implement the interface.
 - In the main, depending on a string value (from a configuration file for instance), we have to build a specific implementation of `AntennaController`, either `ControllerOne` or `ControllerTwo`.
 
 ```
@@ -59,7 +59,7 @@ NewAntennaController[T AntennaController](filePath string) AntennaController {
 }
 ```
 
-Unfortunately, because `ControllerOne` and `ControllerTwo` use pointer receivers for their methods, you cannot write `NewAntennaController[ControllerOne](filepath)` since it is not the object itself but the **pointer** that actually satisfies the interface.
+Unfortunately, because `ControllerOne` and `ControllerTwo` use pointer receivers for their methods, you cannot write `NewAntennaController[ControllerOne](filepath)` since it is not the object itself but the **pointer** that actually implements the interface.
 
 You might then be tempted to write `NewAntennaController[*ControllerOne](filepath)`, but when doing that, **the pointer is not initialized**. As such, the naive implementation above will fail.
 
